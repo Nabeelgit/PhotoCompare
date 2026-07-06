@@ -19,10 +19,10 @@ body {
 }
 
 .card {
-    width: 700px;
+    width: 750px;
     background: white;
     border-radius: 18px;
-    box-shadow: 0 15px 40px rgba(0,0,0,.12);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, .12);
     padding: 30px;
 }
 
@@ -35,23 +35,31 @@ h1 {
 .controls {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 label {
     font-weight: 600;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
+#opacityValue {
+    color: #4a90e2;
+    font-weight: bold;
+}
+
+/* ---------------- File Upload ---------------- */
+
 input[type=file] {
-    padding: 10px;
+    padding: 12px;
     border: 2px dashed #d5d5d5;
     border-radius: 10px;
     cursor: pointer;
@@ -73,34 +81,78 @@ input[type=file].error {
     border: 2px solid #dc3545;
     background: #fff5f5;
 }
+
+/* ---------------- Dimension Controls ---------------- */
+
+.dimension-controls {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+
+    margin-top: 5px;
+    padding: 15px;
+
+    background: #f8f9fb;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.dimension-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 90px;
+    gap: 15px;
+    align-items: center;
+}
+
+.dimension-row label {
+    justify-content: flex-start;
+}
+
+.dimension-row input[type=number] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.dimension-row input[type=range] {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* ---------------- Opacity Slider ---------------- */
+
 input[type=range] {
     width: 100%;
     cursor: pointer;
 }
 
+/* ---------------- Image Display ---------------- */
+
 .photo {
     margin-top: 35px;
+
     position: relative;
+
     width: 100%;
     aspect-ratio: 1;
+
     overflow: hidden;
+
     border-radius: 14px;
     border: 1px solid #ddd;
+
     background: #ececec;
 }
 
 .photo img {
     position: absolute;
     inset: 0;
+
     width: 100%;
     height: 100%;
 
-    /* Make both images identical size */
     object-fit: cover;
-
-    /* Prevent dragging */
-    user-select: none;
-    -webkit-user-drag: none;
 }
 
 #photo1 {
@@ -109,10 +161,23 @@ input[type=range] {
 
 #photo2 {
     z-index: 2;
-    opacity: 0.5;
+    opacity: .5;
 }
 
-#opacityValue {
-    color: #4a90e2;
-    font-weight: bold;
+/* ---------------- Responsive ---------------- */
+
+@media (max-width: 800px) {
+
+    .card {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .dimension-row {
+        grid-template-columns: 1fr;
+    }
+
+    .dimension-row label {
+        margin-bottom: -8px;
+    }
 }
