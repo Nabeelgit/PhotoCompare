@@ -1,22 +1,43 @@
-const img1 = document.getElementById("image1");
-const img2 = document.getElementById("image2");
+const img1Input = document.getElementById("image1");
+const img2Input = document.getElementById("image2");
+
+const photo1 = document.getElementById("photo1");
+const photo2 = document.getElementById("photo2");
 
 const slider = document.getElementById("opacitySlider");
 const opacityValue = document.getElementById("opacityValue");
-const photo2 = document.getElementById("photo2");
 
-// Initialize slider
+let original1 = null;
+let original2 = null;
+
+// -------------------------
+// Opacity Slider
+// -------------------------
+
 photo2.style.opacity = slider.value;
 opacityValue.textContent = Math.round(slider.value * 100) + "%";
 
-// Update opacity
 slider.addEventListener("input", () => {
     photo2.style.opacity = slider.value;
     opacityValue.textContent = Math.round(slider.value * 100) + "%";
 });
 
-// Function to load an image and update the input style
-function loadImage(input, imageId) {
+// -------------------------
+// Image Loading
+// -------------------------
+
+function readImage(file) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+
+        img.onload = () => resolve(img);
+        img.onerror = () => reject();
+
+        img.src = URL.createObjectURL(file);
+    });
+}
+
+async function loadImage(input, which) {
     input.classList.remove("success", "error");
 
     const file = input.files[0];
@@ -26,24 +47,59 @@ function loadImage(input, imageId) {
         return;
     }
 
-    const img = document.getElementById(imageId);
+    try {
+        const image = await readImage(file);
 
-    img.onload = () => {
+        if (which === 1) {
+            original1 = image;
+        } else {
+            original2 = image;
+        }
+
         input.classList.add("success");
-    };
 
-    img.onerror = () => {
+        // Only compare once both images are loaded
+        if (original1 && original2) {
+            resizeAndDisplay();
+        }
+
+    } catch (err) {
         input.classList.add("error");
-    };
-
-    img.src = URL.createObjectURL(file);
+        console.error(err);
+    }
 }
 
-// File input listeners
-img1.addEventListener("change", () => {
-    loadImage(img1, "photo1");
-});
+// -------------------------
+// Resize Images
+// -------------------------
 
-img2.addEventListener("change", () => {
-    loadImage(img2, "photo2");
-});
+function resizeAndDisplay() {
+
+    // Resize both images to the smaller dimensions
+    const width = Math.min(original1.width, original2.width);
+    const height = Math.min(original1.height, original2.height);
+
+    const canvas1 = document.createElement("canvas");
+    canvas1.width = width;
+    canvas1.height = height;
+
+    const ctx1 = canvas1.getContext("2d");
+    ctx1.drawImage(original1, 0, 0, width, height);
+
+    const canvas2 = document.createElement("canvas");
+    canvas2.width = width;
+    canvas2.height = height;
+
+    const ctx2 = canvas2.getContext("2d");
+    ctx2.drawImage(original2, 0, 0, width, height);
+
+    photo1.src = canvas1.toDataURL("image/png");
+    photo2.src = canvas2.toDataURL("image/png");
+}
+
+// -------------------------
+// Event Listeners
+// -------------------------
+
+img1Input.addEventListener("change", () => loadImage(img1Input, 1));
+img2Input.addEventListener("change", () => loadImage(img2Input, 2));
